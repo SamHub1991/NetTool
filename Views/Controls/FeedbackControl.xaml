@@ -1,0 +1,37 @@
+<UserControl x:Class="DeerFlow.WPF.Views.Controls.FeedbackControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <Border Background="{StaticResource CardBackground}"
+            CornerRadius="8" Padding="16" Margin="8">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- 反馈标题 -->
+            <TextBlock Grid.Row="0" Text="💬 反馈这条回复" FontSize="14" FontWeight="SemiBold"
+                       Foreground="{StaticResource TextColor}" Margin="0,0,0,12"/>
+
+            <!-- 反馈按钮 -->
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,12">
+                <Button x:Name="LikeButton" Content="👍 有帮助" 
+                        Style="{StaticResource SecondaryButton}"
+                        Padding="16,8" Margin="0,0,12,0"
+                        Click="LikeButton_Click"/>
+                <Button x:Name="DislikeButton" Content="👎 需改进" 
+                        Style="{StaticResource SecondaryButton}"
+                        Padding="16,8"
+                        Click="DislikeButton_Click"/>
+            </StackPanel>
+
+            <!-- 感谢提示（初始隐藏） -->
+            <TextBlock Grid.Row="2" x:Name="ThanksMessage" 
+                       Text="感谢您的反馈！" FontSize="13"
+                       Foreground="{StaticResource AccentColor}"
+                       Visibility="Collapsed"/>
+        </Grid>
+    </Border>
+</UserControl>

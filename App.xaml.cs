@@ -59,6 +59,32 @@ public partial class App : Application
             client.Timeout = TimeSpan.FromSeconds(15);
         });
 
+        // === Self-Improvement System ===
+
+        // 1. 注册自我反思服务
+        services.AddSingleton<ISelfReflectionService, SelfReflectionService>();
+
+        // 2. 注册模式挖掘服务
+        services.AddSingleton<IPatternMiner, PatternMiner>();
+
+        // 3. 注册自动演化服务
+        services.AddSingleton<IAutoEvolver, AutoEvolver>();
+
+        // 4. 注册经验记忆存储
+        services.AddSingleton<IExperienceMemoryStore, ExperienceMemoryStore>();
+
+        // 6. 注册用户反馈服务
+        services.AddSingleton<IFeedbackService, FeedbackService>();
+
+        // 7. 注册智能告警服务
+        services.AddSingleton<IAlertService, AlertService>();
+
+        // 8. 注册文档生成服务
+        services.AddSingleton<IDocumentGenerationService, DocumentGenerationService>();
+
+        // 5. 注册自我改进插件
+        services.AddTransient<SelfImprovementPlugin>();
+
         // === Semantic Kernel 集成 ===
 
         // 1. 注册 Kernel
@@ -81,6 +107,7 @@ public partial class App : Application
         services.AddTransient<SandboxPlugin>();
         services.AddSingleton<MemoryPlugin>();
         services.AddTransient<WebSearchPlugin>();
+        services.AddTransient<SelfImprovementPlugin>();
 
         // 4. 注册 Filters（可观测性拦截点）
         services.AddSingleton<IFunctionInvocationFilter, SKLoggingFilter>();
@@ -121,5 +148,8 @@ public partial class App : Application
 
         var webSearchPlugin = serviceProvider.GetRequiredService<WebSearchPlugin>();
         kernel.ImportPluginFromObject(webSearchPlugin, "web");
+
+        var selfImprovementPlugin = serviceProvider.GetRequiredService<SelfImprovementPlugin>();
+        kernel.ImportPluginFromObject(selfImprovementPlugin, "self_improve");
     }
 }

@@ -1,6 +1,7 @@
 <UserControl x:Class="DeerFlow.WPF.Views.Pages.HomePage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:DeerFlow.WPF.Views.Controls">
 
     <ScrollViewer VerticalScrollBarVisibility="Hidden"
                   HorizontalScrollBarVisibility="Hidden"
@@ -75,29 +76,56 @@
                 </Border>
             </Grid>
 
-            <!-- 核心特性 -->
-            <Border Grid.Row="2" Background="{StaticResource CardBackground}"
-                    CornerRadius="12" Padding="28" Margin="0,0,0,24">
-                <StackPanel>
-                    <TextBlock Text="🚀 核心特性" FontSize="18" FontWeight="Bold"
-                               Foreground="{StaticResource TextColor}" Margin="0,0,0,16"/>
-                    <Grid>
+            <!-- 健康监控仪表盘 -->
+            <local:HealthMonitorControl Grid.Row="2" Margin="0,0,0,24"
+                                        DataContext="{Binding}"/>
+
+            <!-- 最近任务 -->
+            <Border Grid.Row="3" Background="{StaticResource CardBackground}"
+                    CornerRadius="10" Padding="24">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="0,0,0,16">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="📋 最近任务" FontSize="18" FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextColor}"/>
+                        <Button Grid.Column="1" Content="🔄 刷新" Style="{StaticResource SecondaryButton}"
+                                Padding="12,6" Command="{Binding RefreshHealthCommand}"/>
+                    </Grid>
 
-                        <Border Grid.Column="0" Padding="8">
-                            <StackPanel>
-                                <TextBlock Text="🔒" FontSize="24"/>
-                                <TextBlock Text="多窗口隔离" FontSize="14" FontWeight="SemiBold"
-                                           Foreground="{StaticResource TextColor}" Margin="0,4,0,0"/>
-                                <TextBlock Text="每个任务独立沙箱进程运行" FontSize="12"
-                                           Foreground="{StaticResource TextMutedColor}"/>
-                            </StackPanel>
-                        </Border>
+                    <ItemsControl Grid.Row="1" ItemsSource="{Binding RecentTasks}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{StaticResource BackgroundColor}"
+                                        CornerRadius="6" Padding="16" Margin="0,0,0,8">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="{Binding Title}" FontSize="14" FontWeight="SemiBold"
+                                                       Foreground="{StaticResource TextColor}"/>
+                                            <TextBlock Text="{Binding Status}" FontSize="12"
+                                                       Foreground="{StaticResource TextMutedColor}" Margin="0,4,0,0"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="1" Text="{Binding Progress, StringFormat={}{0}%}"
+                                                   FontSize="12" Foreground="{StaticResource AccentColor}"
+                                                   VerticalAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+            </Border>
 
                         <Border Grid.Column="1" Padding="8">
                             <StackPanel>
