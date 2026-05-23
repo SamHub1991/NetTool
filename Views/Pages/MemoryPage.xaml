@@ -1,0 +1,123 @@
+<UserControl x:Class="DeerFlow.WPF.Views.Pages.MemoryPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:models="clr-namespace:DeerFlow.WPF.Models">
+
+    <Grid Background="{StaticResource ContentBackground}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="{StaticResource BackgroundColor}"
+                BorderBrush="{StaticResource BorderColor}" BorderThickness="0,0,0,1"
+                Padding="20,14">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="🧠 记忆库" FontSize="16" FontWeight="SemiBold"
+                           Foreground="{StaticResource TextColor}" VerticalAlignment="Center"/>
+
+                <TextBox Grid.Column="1" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="16,0" MinHeight="34" FontSize="13"
+                         ToolTip="输入关键词搜索记忆，Enter 快速搜索">
+                    <TextBox.InputBindings>
+                        <KeyBinding Key="Enter" Command="{Binding SearchCommand}"/>
+                    </TextBox.InputBindings>
+                </TextBox>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <Button Content="搜索" Style="{StaticResource PrimaryButton}"
+                            Command="{Binding SearchCommand}" Margin="0,0,8,0"/>
+                    <Button Content="清空" Style="{StaticResource SecondaryButton}"
+                            Command="{Binding ClearMemoriesCommand}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <ListBox ItemsSource="{Binding Memories}"
+                     Background="Transparent" BorderThickness="0"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     VirtualizingStackPanel.IsVirtualizing="True"
+                     VirtualizingStackPanel.VirtualizationMode="Recycling"
+                     Margin="20">
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type models:MemoryItem}">
+                            <Border Background="{StaticResource CardBackground}"
+                                    CornerRadius="10" Padding="20" Margin="0,0,0,12">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Grid.Column="0" Width="36" Height="36" CornerRadius="8"
+                                            Background="{StaticResource AccentColor}"
+                                            Margin="0,0,16,0">
+                                        <TextBlock Text="🧠" FontSize="18"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <StackPanel Grid.Column="1">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Border CornerRadius="4" Padding="6,2">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Type}" Value="fact">
+                                                                <Setter Property="Background" Value="#2A2A4A"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Type}" Value="preference">
+                                                                <Setter Property="Background" Value="#2A4A2A"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Type}" Value="context">
+                                                                <Setter Property="Background" Value="#4A2A2A"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBlock Text="{Binding Type}" FontSize="10"
+                                                           Foreground="{StaticResource TextSecondaryColor}"/>
+                                            </Border>
+                                            <TextBlock Text="★" FontSize="14"
+                                                       Foreground="{StaticResource WarningColor}"
+                                                       VerticalAlignment="Center" Margin="8,0,0,0"/>
+                                            <TextBlock Text="{Binding Importance}" FontSize="12"
+                                                       Foreground="{StaticResource TextSecondaryColor}"
+                                                       VerticalAlignment="Center" Margin="2,0,0,0"/>
+                                        </StackPanel>
+                                        <TextBlock Text="{Binding Content}" FontSize="14"
+                                                   Foreground="{StaticResource TextColor}"
+                                                   TextWrapping="Wrap" Margin="0,8,0,0"/>
+                                        <TextBlock FontSize="11" Foreground="{StaticResource TextMutedColor}"
+                                                   Margin="0,6,0,0">
+                                            创建: <Run Text="{Binding CreatedAt, StringFormat='yyyy-MM-dd HH:mm'}"/>
+                                        </TextBlock>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="2" VerticalAlignment="Top">
+                                        <TextBlock Text="..." FontSize="18"
+                                                   Foreground="{StaticResource TextMutedColor}"
+                                                   Margin="8,0,0,0"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <!-- 无结果提示 -->
+            <TextBlock Text="未找到匹配的记忆" FontSize="16"
+                       Foreground="{StaticResource TextMutedColor}"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Visibility="{Binding HasNoResults, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        </Grid>
+    </Grid>
+</UserControl>

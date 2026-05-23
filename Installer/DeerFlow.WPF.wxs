@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*" Name="DeerFlow.WPF"
+           Language="2052" Version="1.0.0"
+           Manufacturer="DeerFlow.WPF Team"
+           UpgradeCode="B3E5F7A9-1C2D-4E8F-B6A0-9D3C5E7F1A2B">
+
+    <Package InstallerVersion="500" Compressed="yes"
+             InstallScope="perMachine"
+             Platform="x64"
+             Description="AI 桌面超级智能体" />
+
+    <MajorUpgrade DowngradeErrorMessage="已安装更新版本" />
+
+    <MediaTemplate EmbedCab="yes" />
+
+    <!-- 功能分组 -->
+    <Feature Id="MainFeature" Title="主程序" Level="1">
+      <ComponentGroupRef Id="MainComponents" />
+      <ComponentGroupRef Id="ResourceComponents" />
+    </Feature>
+
+    <Feature Id="DocumentationFeature" Title="文档" Level="1">
+      <ComponentGroupRef Id="DocumentationComponents" />
+    </Feature>
+
+    <!-- 安装目录 -->
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFiles64Folder">
+        <Directory Id="INSTALLFOLDER" Name="DeerFlow.WPF">
+          <Directory Id="DocFolder" Name="Documents" />
+        </Directory>
+      </Directory>
+
+      <!-- 开始菜单快捷方式 -->
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="StartMenuFolder" Name="DeerFlow.WPF" />
+      </Directory>
+
+      <!-- 桌面快捷方式 -->
+      <Directory Id="DesktopFolder" />
+    </Directory>
+
+    <!-- 主程序组件 -->
+    <ComponentGroup Id="MainComponents" Directory="INSTALLFOLDER">
+      <Component Id="MainExe" Guid="D1A2B3C4-5E6F-7890-ABCD-EF1234567890">
+        <File Id="MainExeFile" Source="..\bin\Debug\net10.0-windows\DeerFlow.WPF.exe"
+              KeyPath="yes" />
+      </Component>
+      <Component Id="MainDll" Guid="A1B2C3D4-E5F6-7890-ABCD-EF1234567891">
+        <File Id="MainDllFile" Source="..\bin\Debug\net10.0-windows\DeerFlow.WPF.dll"
+              KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+
+    <!-- 资源组件 -->
+    <ComponentGroup Id="ResourceComponents" Directory="INSTALLFOLDER">
+      <Component Id="DepsJson" Guid="B2C3D4E5-F6A7-8901-BCDE-F12345678902">
+        <File Source="..\bin\Debug\net10.0-windows\DeerFlow.WPF.deps.json"
+              KeyPath="yes" />
+      </Component>
+      <Component Id="RuntimeConfig" Guid="C3D4E5F6-A7B8-9012-CDEF-12345678903">
+        <File Source="..\bin\Debug\net10.0-windows\DeerFlow.WPF.runtimeconfig.json"
+              KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+
+    <!-- 文档组件 -->
+    <ComponentGroup Id="DocumentationComponents" Directory="DocFolder">
+      <Component Id="DevDoc" Guid="D4E5F6A7-B8C9-0123-DEF1-2345678904">
+        <File Source="..\开发文档.md" KeyPath="yes" />
+      </Component>
+      <Component Id="UserManual" Guid="E5F6A7B8-C9D0-1234-EF12-345678905">
+        <File Source="..\用户手册.md" KeyPath="yes" />
+      </Component>
+      <Component Id="FeasibilityReport" Guid="F6A7B8C9-D0E1-2345-F123-45678906">
+        <File Source="..\可行性研究报告.md" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+
+    <!-- 开始菜单快捷方式 -->
+    <Component Id="StartMenuShortcut" Guid="A7B8C9D0-E1F2-3456-1234-5678907" 
+               Directory="StartMenuFolder">
+      <Shortcut Id="StartMenuLink" Name="DeerFlow.WPF"
+                Target="[INSTALLFOLDER]DeerFlow.WPF.exe"
+                WorkingDirectory="INSTALLFOLDER" />
+      <RemoveFolder Id="RemoveStartMenu" On="uninstall" />
+      <RegistryValue Root="HKCU"
+                     Key="Software\DeerFlow.WPF"
+                     Name="installed"
+                     Type="integer" Value="1"
+                     KeyPath="yes" />
+    </Component>
+
+    <!-- 桌面快捷方式 -->
+    <Component Id="DesktopShortcut" Guid="B8C9D0E1-F2A3-4567-2345-67808"
+               Directory="DesktopFolder">
+      <Shortcut Id="DesktopLink" Name="DeerFlow.WPF"
+                Target="[INSTALLFOLDER]DeerFlow.WPF.exe"
+                WorkingDirectory="INSTALLFOLDER" />
+      <RegistryValue Root="HKCU"
+                     Key="Software\DeerFlow.WPF"
+                     Name="desktopShortcut"
+                     Type="integer" Value="1"
+                     KeyPath="yes" />
+    </Component>
+
+    <!-- 用户界面 -->
+    <UI>
+      <UIRef Id="WixUI_Mondo" />
+      <Publish Dialog="WelcomeDlg" Control="Next"
+               Event="NewDialog" Value="LicenseAgreementDlg" />
+      <Publish Dialog="LicenseAgreementDlg" Control="Back"
+               Event="NewDialog" Value="WelcomeDlg" />
+      <Publish Dialog="LicenseAgreementDlg" Control="Next"
+               Event="NewDialog" Value="InstallDirDlg" />
+      <Publish Dialog="InstallDirDlg" Control="Back"
+               Event="NewDialog" Value="LicenseAgreementDlg" />
+      <Publish Dialog="InstallDirDlg" Control="Next"
+               Event="NewDialog" Value="VerifyReadyDlg" />
+      <Publish Dialog="VerifyReadyDlg" Control="Back"
+               Event="NewDialog" Value="InstallDirDlg" />
+    </UI>
+
+    <!-- 许可协议占位 -->
+    <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+
+    <!-- 产品图标 -->
+    <Icon Id="app.ico" SourceFile="Resources\app.ico" />
+    <Property Id="ARPPRODUCTICON" Value="app.ico" />
+
+  </Product>
+</Wix>

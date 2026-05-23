@@ -1,0 +1,241 @@
+<UserControl x:Class="DeerFlow.WPF.Views.Pages.IMSettingsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:models="clr-namespace:DeerFlow.WPF.Models">
+
+    <Grid Background="{StaticResource ContentBackground}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 标题栏 -->
+        <Border Grid.Row="0" Background="{StaticResource BackgroundColor}"
+                BorderBrush="{StaticResource BorderColor}" BorderThickness="0,0,0,1"
+                Padding="20,14">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="💬" FontSize="18" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <TextBlock Text="IM 接入" FontSize="16" FontWeight="SemiBold"
+                           Foreground="{StaticResource TextColor}" VerticalAlignment="Center"/>
+                <TextBlock Text=" - 飞书 / 企业微信机器人" FontSize="13"
+                           Foreground="{StaticResource TextSecondaryColor}"
+                           VerticalAlignment="Center" Margin="8,0,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- 主内容区：左右两栏 -->
+        <Grid Grid.Row="1" Margin="20,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="260"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 左侧：连接列表 -->
+            <Border Grid.Column="0" Background="{StaticResource CardBackground}"
+                    CornerRadius="10" Padding="12">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Button Grid.Row="0" Content="+ 新建连接"
+                            Style="{StaticResource PrimaryButton}"
+                            Command="{Binding NewConnectionCommand}"
+                            Margin="0,0,0,12" Height="36"/>
+
+                    <ListBox Grid.Row="1" ItemsSource="{Binding Connections}"
+                             SelectedItem="{Binding SelectedConnection}"
+                             Background="Transparent" BorderThickness="0"
+                             VirtualizingStackPanel.IsVirtualizing="True">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type models:IMConnection}">
+                                <Border Padding="10,8" CornerRadius="6"
+                                        Margin="0,0,0,4">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- 状态指示灯 -->
+                                        <Ellipse Grid.Column="0" Width="10" Height="10"
+                                                 VerticalAlignment="Center" Margin="0,0,8,0">
+                                            <Ellipse.Style>
+                                                <Style TargetType="Ellipse">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding ConnectionStatus}" Value="Connected">
+                                                            <Setter Property="Fill" Value="{StaticResource SuccessColor}"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding ConnectionStatus}" Value="Connecting">
+                                                            <Setter Property="Fill" Value="{StaticResource WarningColor}"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding ConnectionStatus}" Value="Failed">
+                                                            <Setter Property="Fill" Value="{StaticResource ErrorColor}"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding ConnectionStatus}" Value="Disconnected">
+                                                            <Setter Property="Fill" Value="{StaticResource TextMutedColor}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Ellipse.Style>
+                                        </Ellipse>
+
+                                        <StackPanel Grid.Column="1">
+                                            <TextBlock Text="{Binding DisplayName}" FontSize="13"
+                                                       Foreground="{StaticResource TextColor}"/>
+                                            <TextBlock FontSize="11"
+                                                       Foreground="{StaticResource TextMutedColor}">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding PlatformType}" Value="Feishu">
+                                                                <Setter Property="Text" Value="📨 飞书"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding PlatformType}" Value="WeCom">
+                                                                <Setter Property="Text" Value="💼 企业微信"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListBoxItem">
+                                            <Border x:Name="ItemBorder"
+                                                    Background="{TemplateBinding Background}"
+                                                    CornerRadius="6" Padding="0">
+                                                <ContentPresenter/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="ItemBorder"
+                                                            Property="Background"
+                                                            Value="{StaticResource HoverBackground}"/>
+                                                </Trigger>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter TargetName="ItemBorder"
+                                                            Property="Background"
+                                                            Value="{StaticResource CardBackground}"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                    </ListBox>
+                </Grid>
+            </Border>
+
+            <!-- 分隔线 -->
+            <GridSplitter Grid.Column="1" Width="4"
+                          Background="Transparent"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Stretch"/>
+
+            <!-- 右侧：编辑表单 -->
+            <Border Grid.Column="2" Background="{StaticResource CardBackground}"
+                    CornerRadius="10" Padding="24">
+                <Grid Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- 表单标题 -->
+                    <TextBlock Grid.Row="0" Text="🔗 连接配置" FontSize="16" FontWeight="Bold"
+                               Foreground="{StaticResource TextColor}" Margin="0,0,0,20"/>
+
+                    <!-- DisplayName -->
+                    <StackPanel Grid.Row="1" Margin="0,0,0,16">
+                        <TextBlock Text="连接名称" FontSize="12"
+                                   Foreground="{StaticResource TextMutedColor}" Margin="0,0,0,4"/>
+                        <TextBox Text="{Binding EditingDisplayName}" MinHeight="36" FontSize="13"/>
+                    </StackPanel>
+
+                    <!-- PlatformType -->
+                    <StackPanel Grid.Row="2" Margin="0,0,0,16">
+                        <TextBlock Text="平台类型" FontSize="12"
+                                   Foreground="{StaticResource TextMutedColor}" Margin="0,0,0,4"/>
+                        <ComboBox SelectedItem="{Binding EditingPlatformType}" MinHeight="36" FontSize="13">
+                            <models:PlatformType>Feishu</models:PlatformType>
+                            <models:PlatformType>WeCom</models:PlatformType>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <!-- WebhookUrl -->
+                    <StackPanel Grid.Row="3" Margin="0,0,0,16">
+                        <TextBlock Text="Webhook URL" FontSize="12"
+                                   Foreground="{StaticResource TextMutedColor}" Margin="0,0,0,4"/>
+                        <TextBox Text="{Binding EditingWebhookUrl}" MinHeight="36" FontSize="13"/>
+                    </StackPanel>
+
+                    <!-- Token -->
+                    <StackPanel Grid.Row="4" Margin="0,0,0,16">
+                        <TextBlock Text="验证令牌 (Token)" FontSize="12"
+                                   Foreground="{StaticResource TextMutedColor}" Margin="0,0,0,4"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0" Text="{Binding EditingToken}" MinHeight="36" FontSize="13"
+                                     Visibility="{Binding IsTokenVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                            <PasswordBox Grid.Column="0" x:Name="TokenPasswordBox" MinHeight="36" FontSize="13"
+                                         Visibility="{Binding IsTokenHidden, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                         PasswordChanged="OnTokenPasswordChanged"/>
+                            <Button Grid.Column="1" Content="👁" Width="36" Height="36" Margin="4,0,0,0"
+                                    Style="{StaticResource SecondaryButton}" Padding="0"
+                                    Command="{Binding ToggleTokenVisibilityCommand}" ToolTip="显示/隐藏令牌"/>
+                        </Grid>
+                    </StackPanel>
+
+                    <!-- 状态消息 -->
+                    <Border Grid.Row="5" Padding="0">
+                        <TextBlock Text="{Binding StatusMessage}" FontSize="12"
+                                   Foreground="{StaticResource TextSecondaryColor}"
+                                   TextWrapping="Wrap"/>
+                    </Border>
+
+                    <!-- 操作按钮 -->
+                    <StackPanel Grid.Row="6" Orientation="Horizontal" Margin="0,16,0,0">
+                        <Button Content="💾 保存" Style="{StaticResource PrimaryButton}"
+                                Command="{Binding SaveConnectionCommand}"
+                                MinWidth="100" Height="38" Margin="0,0,8,0"/>
+                        <Button Content="🗑 删除" Style="{StaticResource SecondaryButton}"
+                                Command="{Binding DeleteConnectionCommand}"
+                                MinWidth="90" Height="38" Margin="0,0,8,0"/>
+                        <Button Content="🔍 测试连接"
+                                Command="{Binding TestConnectionCommand}"
+                                MinWidth="110" Height="38" Margin="0,0,0,0"
+                                IsEnabled="{Binding IsTesting, Converter={StaticResource InverseBooleanConverter}}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
+                                    <Setter Property="Background" Value="{StaticResource AccentColor}"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

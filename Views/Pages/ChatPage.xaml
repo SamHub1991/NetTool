@@ -1,0 +1,162 @@
+<UserControl x:Class="DeerFlow.WPF.Views.Pages.ChatPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:models="clr-namespace:DeerFlow.WPF.Models">
+
+    <Grid Background="{StaticResource ContentBackground}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 对话标题 -->
+        <Border Grid.Row="0" Background="{StaticResource BackgroundColor}"
+                BorderBrush="{StaticResource BorderColor}" BorderThickness="0,0,0,1"
+                Padding="20,14">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="💬" FontSize="18" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <TextBlock Grid.Column="1" Text="对话" FontSize="16" FontWeight="SemiBold"
+                           Foreground="{StaticResource TextColor}" VerticalAlignment="Center"/>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <!-- 停止生成按钮，仅在发送中可见 -->
+                    <Button Content="⏹ 停止"
+                            Style="{StaticResource DangerButton}"
+                            Command="{Binding StopGenerationCommand}"
+                            Visibility="{Binding IsSending, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            Margin="0,0,8,0" Padding="12,6"/>
+                    <!-- 清空对话按钮 -->
+                    <Button Content="清空"
+                            Style="{StaticResource SecondaryButton}"
+                            Command="{Binding ClearChatCommand}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- 消息列表 -->
+        <ListBox x:Name="MessageList" Grid.Row="1" ItemsSource="{Binding Messages}"
+                 Background="Transparent" BorderThickness="0"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                 VirtualizingStackPanel.IsVirtualizing="True"
+                 VirtualizingStackPanel.VirtualizationMode="Recycling"
+                 ItemContainerStyle="{x:Null}">
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="{x:Type models:ChatMessage}">
+                    <Border Padding="24,12" Margin="0,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="40"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border Width="32" Height="32" CornerRadius="16"
+                                    VerticalAlignment="Top">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Role}" Value="user">
+                                                <Setter Property="Background" Value="{StaticResource AccentColor}"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Role}" Value="assistant">
+                                                <Setter Property="Background" Value="{StaticResource SuccessColor}"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Role}" Value="system">
+                                                <Setter Property="Background" Value="{StaticResource InfoColor}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock Text="🤖" FontSize="14"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+
+                            <StackPanel Grid.Column="1" Margin="12,0,0,0">
+                                <TextBlock FontSize="11"
+                                           Foreground="{StaticResource TextMutedColor}"
+                                           Margin="0,0,0,4">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Role}" Value="user">
+                                                    <Setter Property="Text" Value="我"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Role}" Value="assistant">
+                                                    <Setter Property="Text" Value="DeerFlow"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Role}" Value="system">
+                                                    <Setter Property="Text" Value="系统"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBlock Text="{Binding Content}"
+                                           FontSize="14"
+                                           Foreground="{StaticResource TextColor}"
+                                           TextWrapping="Wrap"
+                                           MaxWidth="700"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!-- 输入区域 -->
+        <Border Grid.Row="2" Background="{StaticResource BackgroundColor}"
+                BorderBrush="{StaticResource BorderColor}" BorderThickness="0,1,0,0"
+                Padding="20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox Grid.Column="0"
+                         x:Name="InputBox"
+                         Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
+                         Background="{StaticResource CardBackground}"
+                         BorderBrush="{StaticResource BorderColor}"
+                         Foreground="{StaticResource TextColor}"
+                         CaretBrush="{StaticResource AccentColor}"
+                         Padding="16,12" FontSize="14" MinHeight="48"
+                         TextWrapping="Wrap" AcceptsReturn="True"
+                         VerticalScrollBarVisibility="Auto"
+                         IsEnabled="{Binding IsSending, Converter={StaticResource InverseBooleanConverter}}"
+                         ToolTip="Enter 发送，Shift+Enter 换行，Ctrl+Enter 也可发送">
+                    <TextBox.InputBindings>
+                        <!-- Enter 发送（无修饰键） -->
+                        <KeyBinding Key="Enter" Command="{Binding SendCommand}"/>
+                        <!-- Ctrl+Enter 也发送 -->
+                        <KeyBinding Key="Enter" Modifiers="Control" Command="{Binding SendCommand}"/>
+                    </TextBox.InputBindings>
+                </TextBox>
+
+                <StackPanel Grid.Column="1" VerticalAlignment="Bottom" Margin="12,0,0,0">
+                    <!-- 发送按钮 -->
+                    <Button Content="发送 →"
+                            Style="{StaticResource PrimaryButton}"
+                            Command="{Binding SendCommand}"
+                            MinWidth="80"
+                            Height="48"
+                            ToolTip="发送消息 (Enter)"
+                            Margin="0,0,0,4"/>
+                    <!-- 发送中提示 -->
+                    <TextBlock Text="生成中..."
+                               FontSize="11"
+                               Foreground="{StaticResource WarningColor}"
+                               HorizontalAlignment="Center"
+                               Visibility="{Binding IsSending, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>
