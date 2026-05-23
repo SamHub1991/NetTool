@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="10.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SystemToolkit.Core\SystemToolkit.Core.csproj" />
+    <ProjectReference Include="..\SystemToolkit.Modules\FileManager\SystemToolkit.Modules.FileManager.csproj" />
+    <ProjectReference Include="..\SystemToolkit.Modules\RegistryTools\SystemToolkit.Modules.RegistryTools.csproj" />
+    <ProjectReference Include="..\SystemToolkit.Modules\ServiceManager\SystemToolkit.Modules.ServiceManager.csproj" />
+    <ProjectReference Include="..\SystemToolkit.Modules\ProcessManager\SystemToolkit.Modules.ProcessManager.csproj" />
+    <ProjectReference Include="..\SystemToolkit.Modules\DiskManager\SystemToolkit.Modules.DiskManager.csproj" />
+    <ProjectReference Include="..\SystemToolkit.Modules\NetworkTools\SystemToolkit.Modules.NetworkTools.csproj" />
+    <ProjectReference Include="..\SystemToolkit.Modules\DevTools\SystemToolkit.Modules.DevTools.csproj" />
+    <ProjectReference Include="..\SystemToolkit.Modules\DataTools\SystemToolkit.Modules.DataTools.csproj" />
+    <ProjectReference Include="..\SystemToolkit.Modules\ProductivityTools\SystemToolkit.Modules.ProductivityTools.csproj" />
+    <ProjectReference Include="..\SystemToolkit.Modules\MonitorTools\SystemToolkit.Modules.MonitorTools.csproj" />
+  </ItemGroup>
+
+</Project>
